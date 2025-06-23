@@ -1,0 +1,2732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Financial Statement</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #007bff;
+            --secondary-blue: #0d6efd;
+            --light-blue-bg: #e7f3ff;
+            --border-color: #dee2e6;
+            --background-light: #f8f9fa;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --green-accent: #28a745;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            margin: 0; 
+            background-color: var(--background-light); 
+            color: var(--text-primary); 
+            font-size: 14px; 
+        }
+        
+        .top-bar { 
+            background-color: #ffffff; 
+            padding: 8px 16px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid var(--border-color); 
+            font-size: 12px; 
+        }
+        
+        .top-bar-left, .top-bar-center, .top-bar-right { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+        }
+        
+        .top-bar-left .exit-btn { 
+            color: var(--text-primary); 
+            text-decoration: none; 
+            font-weight: 500; 
+        }
+        
+        .top-bar-center { 
+            color: var(--text-secondary); 
+        }
+        
+        .top-bar-right .action-btn { 
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            color: var(--text-secondary); 
+            padding: 5px 8px;
+        }
+        
+        .top-bar-right .action-btn:hover {
+            background-color: var(--background-light);
+            border-radius: 3px;
+        }
+        
+        .top-bar-right .map-data-btn { 
+            background-color: var(--green-accent); 
+            color: white; 
+            border: none; 
+            padding: 6px 12px; 
+            border-radius: 4px; 
+            font-weight: 500; 
+            cursor: pointer;
+        }
+        
+        .nav-tabs { 
+            background-color: #ffffff; 
+            display: flex; 
+            padding: 0 16px; 
+            border-bottom: 1px solid var(--border-color); 
+        }
+        
+        .nav-tab { 
+            padding: 12px 16px; 
+            text-decoration: none; 
+            color: var(--text-secondary); 
+            border-bottom: 3px solid transparent; 
+            margin-bottom: -1px; 
+            transition: all 0.3s;
+        }
+        
+        .nav-tab.active { 
+            color: var(--primary-blue); 
+            border-bottom-color: var(--primary-blue); 
+            font-weight: 500; 
+        }
+        
+        .main-content { 
+            padding: 20px; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+        }
+        
+        .initial-view .section-title { 
+            font-size: 22px; 
+            font-weight: 500; 
+            margin-bottom: 50px; 
+            text-align: center; 
+        }
+        
+        .initial-view .cta-container { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 200px; 
+        }
+        
+        .initial-view .create-btn { 
+            background-color: var(--primary-blue); 
+            color: white; 
+            border: none; 
+            padding: 14px 28px; 
+            font-size: 16px; 
+            font-weight: 500; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            transition: background-color 0.3s;
+        }
+        
+        .initial-view .create-btn:hover {
+            background-color: #0056b3;
+        }
+        
+        .modal { 
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.6); 
+        }
+        
+        .modal-content { 
+            background-color: #fff; 
+            margin: 5% auto; 
+            padding: 0; 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+        }
+        
+        .modal-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px 20px; 
+            border-bottom: 1px solid var(--border-color); 
+        }
+        
+        .modal-header h3 { 
+            margin: 0; 
+            font-size: 18px; 
+            font-weight: 600; 
+        }
+        
+        .close-btn { 
+            color: #aaa; 
+            font-size: 28px; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
+        
+        .close-btn:hover {
+            color: #000;
+        }
+        
+        .modal-body { 
+            padding: 20px; 
+        }
+        
+        .modal-footer { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px 20px; 
+            border-top: 1px solid var(--border-color); 
+            background-color: var(--background-light); 
+        }
+        
+        .modal-footer .footer-left { 
+            color: var(--text-secondary); 
+            font-size: 12px; 
+        }
+        
+        .modal-footer .footer-right { 
+            display: flex; 
+            gap: 10px; 
+        }
+        
+        .modal-footer .btn { 
+            padding: 8px 16px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 14px; 
+            font-weight: 500; 
+            border: 1px solid transparent;
+        }
+        
+        .modal-footer .btn-secondary { 
+            background-color: #fff; 
+            color: #343a40; 
+            border: 1px solid #ccc; 
+        }
+        
+        .modal-footer .btn-primary { 
+            background-color: var(--primary-blue); 
+            color: white; 
+            border: 1px solid var(--primary-blue); 
+        }
+        
+        /* PFS Template Modal Styles */
+        #pfsTemplateModal .modal-content { 
+            width: 60%; 
+            max-width: 800px; 
+        }
+        
+        #pfsTemplateModal .search-container { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+            margin-bottom: 20px; 
+        }
+        
+        #pfsTemplateModal .search-box { 
+            position: relative; 
+        }
+        
+        #pfsTemplateModal .search-box input { 
+            width: 100%; 
+            padding: 8px 30px 8px 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+        }
+        
+        #pfsTemplateModal .search-box .fa-search { 
+            position: absolute; 
+            top: 50%; 
+            right: 10px; 
+            transform: translateY(-50%); 
+            color: #aaa; 
+        }
+        
+        .template-list-header, .template-list-item { 
+            display: grid; 
+            grid-template-columns: 50px 1fr 1fr; 
+            align-items: center; 
+            padding: 10px 8px; 
+        }
+        
+        .template-list-header { 
+            font-weight: 600; 
+            background-color: var(--background-light); 
+            border-bottom: 2px solid var(--border-color); 
+        }
+        
+        .template-list { 
+            max-height: 300px; 
+            overflow-y: auto; 
+        }
+        
+        .template-list-item { 
+            border-bottom: 1px solid #e9ecef; 
+            cursor: pointer;
+        }
+        
+        .template-list-item:hover { 
+            background-color: #f1f3f5; 
+        }
+        
+        /* As Of Date Modal */
+        #asOfDateModal .modal-content { 
+            width: 450px; 
+        }
+        
+        #asOfDateModal label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 600; 
+        }
+        
+        #asOfDateModal input[type="date"] { 
+            width: 100%; 
+            padding: 8px 12px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            font-size: 16px; 
+        }
+
+        /* Add Period Modal */
+        #addPeriodModal .modal-content { 
+            width: 600px; 
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .add-period-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .form-group select,
+        .form-group input {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Period Generator Section */
+        .period-generator {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--background-light);
+        }
+
+        .period-generator h4 {
+            margin: 0 0 10px 0;
+            color: var(--primary-blue);
+        }
+
+        .number-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .number-input-group input {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .plus-btn {
+            background-color: var(--green-accent);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .plus-btn:hover {
+            background-color: #218838;
+        }
+
+        .generated-periods {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .period-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 5px;
+            background-color: white;
+        }
+
+        .period-item .period-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .period-item .period-date {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .period-item .period-type {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .period-item .remove-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        /* Complete PFS View with Period Columns */
+        .pfs-complete-view {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+        
+        .pfs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--secondary-blue);
+            color: white;
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .pfs-header .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .pfs-header .as-of-date {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .pfs-header .add-period-btn {
+            background-color: var(--green-accent);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        /* Period Selector Dropdown */
+        .period-selector {
+            margin-left: 20px;
+        }
+
+        .period-selector select {
+            padding: 8px 12px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 4px;
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 14px;
+            min-width: 200px;
+        }
+
+        .period-selector select option {
+            background-color: var(--secondary-blue);
+            color: white;
+        }
+        
+        .pfs-sections {
+            display: flex;
+            background-color: var(--background-light);
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+        
+        .pfs-section-tab {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-right: 1px solid var(--border-color);
+            font-weight: 500;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+            font-size: 13px;
+        }
+        
+        .pfs-section-tab:last-child {
+            border-right: none;
+        }
+        
+        .pfs-section-tab.active {
+            background-color: white;
+            border-bottom: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        
+        .pfs-section-tab:hover {
+            background-color: #e9ecef;
+        }
+        
+        .pfs-content {
+            padding: 20px;
+        }
+        
+        .section-content {
+            display: none;
+        }
+        
+        .section-content.active {
+            display: block;
+        }
+        
+        /* Balance Sheet with Period Columns */
+        .balance-sheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            display: block;
+            white-space: nowrap;
+        }
+
+        .balance-sheet-table thead,
+        .balance-sheet-table tbody,
+        .balance-sheet-table tfoot {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        
+        .balance-sheet-table th,
+        .balance-sheet-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            min-width: 150px;
+        }
+        
+        .balance-sheet-table th {
+            background-color: var(--background-light);
+            font-weight: 600;
+        }
+        
+        .balance-sheet-table .category-header {
+            background-color: var(--light-blue-bg);
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        
+        .balance-sheet-table .total-row {
+            background-color: var(--background-light);
+            font-weight: 600;
+        }
+        
+        .balance-sheet-table .item-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 300px;
+        }
+        
+        .balance-sheet-table .add-icon {
+            color: var(--green-accent);
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .balance-sheet-table .sub-item {
+            padding-left: 20px;
+        }
+        
+        .balance-sheet-table .amount-cell {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* Schedule Tables */
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .schedule-table th,
+        .schedule-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .schedule-table th {
+            background-color: var(--background-light);
+            font-weight: 600;
+        }
+        
+        .schedule-table .amount-cell {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .schedule-header {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary-blue);
+        }
+
+        /* Additional styles for forms */
+        .form-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+        }
+        
+        .currency {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .btn-add-row {
+            background-color: var(--green-accent);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        
+        .btn-add-row:hover {
+            background-color: #218838;
+        }
+        
+        .total-row {
+            background-color: var(--background-light);
+            font-weight: 600;
+        }
+        
+        .total-label {
+            font-weight: 600;
+        }
+        
+        .total-amount {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <a href="#" class="exit-btn"><i class="fas fa-arrow-left"></i> Exit</a>
+                <h1 style="font-size: 18px; margin: 0;">Temba Bavuma</h1>
+            </div>
+            <div class="top-bar-center">
+                <span>Last auto-save <i class="far fa-clock"></i> 10 hours ago</span> | <span>Vishwanil Indi</span>
+            </div>
+            <div class="top-bar-right">
+                <button class="action-btn">Create <i class="fas fa-caret-down"></i></button>
+                <button class="action-btn">View <i class="fas fa-caret-down"></i></button>
+                <button class="action-btn">Edit <i class="fas fa-caret-down"></i></button>
+                <button class="action-btn">Export <i class="fas fa-file-export"></i></button>
+                <button class="action-btn">Print <i class="fas fa-print"></i></button>
+                <button class="action-btn">Save <i class="fas fa-save"></i></button>
+                <button class="map-data-btn">Map Data <i class="fas fa-map-marker-alt"></i></button>
+            </div>
+        </div>
+        <nav class="nav-tabs">
+            <a href="#" class="nav-tab">Personal Tax Return</a>
+            <a href="#" class="nav-tab">Personal Cash Flow</a>
+            <a href="#" class="nav-tab active">Personal Financial Statement</a>
+            <a href="#" class="nav-tab">Debt Schedule</a>
+            <a href="#" class="nav-tab">Global Debt Service</a>
+            <a href="#" class="nav-tab">Personal Real Estate Schedule</a>
+        </nav>
+    </header>
+
+    <main class="main-content" id="mainContent">
+        <!-- Initial View -->
+        <div class="initial-view" id="initialView">
+            <h2 class="section-title">Personal Financial Statement</h2>
+            <div class="cta-container">
+                <button class="create-btn" onclick="openTemplateModal()">Create Personal Financial Statement</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal 1: Select PFS Template -->
+    <div id="pfsTemplateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select a PFS Template</h3>
+                <span class="close-btn" onclick="closeModal('pfsTemplateModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" id="templateNameSearch" placeholder="Search Template Name" oninput="filterTemplates()">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" id="templateTypeSearch" placeholder="Search Template Type" oninput="filterTemplates()">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                <div class="template-list-header">
+                    <div></div>
+                    <div>Template Name</div>
+                    <div>Template Type</div>
+                </div>
+                <div class="template-list" id="templateList">
+                    <div class="template-list-item" onclick="selectTemplate(this)">
+                        <div><input type="radio" name="pfsTemplate" value="UIAutoTC01IND499975"></div>
+                        <div>UIAutoTC01IND499975</div>
+                        <div>Individual</div>
+                    </div>
+                    <div class="template-list-item" onclick="selectTemplate(this)">
+                        <div><input type="radio" name="pfsTemplate" value="UIAutoTC01IND693699"></div>
+                        <div>UIAutoTC01IND693699</div>
+                        <div>Individual</div>
+                    </div>
+                    <div class="template-list-item" onclick="selectTemplate(this)">
+                        <div><input type="radio" name="pfsTemplate" value="UIAutoTC01IND553478"></div>
+                        <div>UIAutoTC01IND553478</div>
+                        <div>Individual</div>
+                    </div>
+                    <div class="template-list-item" onclick="selectTemplate(this)">
+                        <div><input type="radio" name="pfsTemplate" value="UIAutoTC02COVREG875747"></div>
+                        <div>UIAutoTC02COVREG875747</div>
+                        <div>Individual</div>
+                    </div>
+                    <div class="template-list-item" onclick="selectTemplate(this)">
+                        <div><input type="radio" name="pfsTemplate" value="UIAutoTC04FUNCOVINDSRD986051"></div>
+                        <div>UIAutoTC04FUNCOVINDSRD986051</div>
+                        <div>Individual</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="footer-left"></div>
+                <div class="footer-right">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('pfsTemplateModal')">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="createPfs()">Create PFS</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: As Of Date -->
+    <div id="asOfDateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create Personal Financial Statement</h3>
+                <span class="close-btn" onclick="closeModal('asOfDateModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <label for="asOfDate">As Of Date * <i class="far fa-question-circle"></i></label>
+                <input type="date" id="asOfDate" name="asOfDate" value="2025-06-18">
+            </div>
+            <div class="modal-footer">
+                <div class="footer-left"></div>
+                <div class="footer-right">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('asOfDateModal')">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="savePfs()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Add Period Modal -->
+    <div id="addPeriodModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Periods</h3>
+                <span class="close-btn" onclick="closeModal('addPeriodModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="add-period-form">
+                    <div class="form-group">
+                        <label>Statement Type *</label>
+                        <select id="statementType">
+                            <option value="PFS">PFS</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Statement Date *</label>
+                        <input type="date" id="statementDate">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Period Type *</label>
+                    <select id="periodType" onchange="updatePeriodGenerator()">
+                        <option value="Annual">Annual (12 months)</option>
+                        <option value="Quarterly">Quarterly (3 months)</option>
+                        <option value="Monthly">Monthly (1 month)</option>
+                        <option value="Custom">Custom</option>
+                    </select>
+                </div>
+
+                <div class="period-generator">
+                    <h4>Generate Multiple Periods</h4>
+                    <div class="number-input-group">
+                        <label>Number of periods:</label>
+                        <input type="number" id="numberOfPeriods" min="1" max="10" value="1">
+                        <button type="button" class="plus-btn" onclick="generatePeriods()">
+                            <i class="fas fa-plus"></i> Generate
+                        </button>
+                    </div>
+                    <div class="generated-periods" id="generatedPeriods" style="display: none;">
+                        <h4>Generated Periods</h4>
+                        <div id="periodsList"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="footer-left">Created By: Vishwanil C</div>
+                <div class="footer-right">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addPeriodModal')">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="savePeriod()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentView = 'initial';
+        let periods = [];
+        let currentPeriodIndex = 0;
+        let periodData = {}; // Store data for each period
+        let generatedPeriods = [];
+        
+        // Function to open template modal
+        function openTemplateModal() {
+            document.getElementById('pfsTemplateModal').style.display = 'block';
+        }
+        
+        // Function to close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // Function to select template
+        function selectTemplate(element) {
+            const radio = element.querySelector('input[type="radio"]');
+            radio.checked = true;
+        }
+        
+        // Function to filter templates
+        function filterTemplates() {
+            const nameFilter = document.getElementById('templateNameSearch').value.toUpperCase();
+            const typeFilter = document.getElementById('templateTypeSearch').value.toUpperCase();
+            const items = document.querySelectorAll('.template-list-item');
+            
+            items.forEach(item => {
+                const nameText = item.children[1].textContent.toUpperCase();
+                const typeText = item.children[2].textContent.toUpperCase();
+                
+                if (nameText.includes(nameFilter) && typeText.includes(typeFilter)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+        
+        // Function to create PFS
+        function createPfs() {
+            const selectedTemplate = document.querySelector('input[name="pfsTemplate"]:checked');
+            if (selectedTemplate) {
+                closeModal('pfsTemplateModal');
+                document.getElementById('asOfDateModal').style.display = 'block';
+            } else {
+                alert("Please select a template.");
+            }
+        }
+        
+        // Function to save PFS
+        function savePfs() {
+            const selectedDate = document.getElementById('asOfDate').value;
+            if (selectedDate) {
+                closeModal('asOfDateModal');
+                periods = [{
+                    date: selectedDate,
+                    months: 12,
+                    type: 'Initial'
+                }];
+                
+                // Initialize period data with different values for the initial period
+                initializePeriodData(0, selectedDate);
+                
+                renderPfsView();
+            } else {
+                alert("Please select a date.");
+            }
+        }
+
+        // Function to initialize period data with different values
+        function initializePeriodData(periodIndex, date) {
+            const baseMultiplier = 1 + (periodIndex * 0.15); // 15% variation per period
+            const dateMultiplier = new Date(date).getMonth() / 12; // Seasonal variation
+            
+            periodData[periodIndex] = {
+                date: date,
+                // Sample data for all schedules with variations
+                incomeExpenses: {
+                    salaryApplicant: Math.round((85000 * baseMultiplier + dateMultiplier * 10000) * 100) / 100,
+                    salaryCoApplicant: Math.round((65000 * baseMultiplier + dateMultiplier * 8000) * 100) / 100,
+                    bonuses: Math.round((12000 * baseMultiplier + dateMultiplier * 3000) * 100) / 100,
+                    rentalIncome: Math.round((24000 * baseMultiplier + dateMultiplier * 5000) * 100) / 100,
+                    dividends: Math.round((8500 * baseMultiplier + dateMultiplier * 2000) * 100) / 100,
+                    businessIncome: Math.round((35000 * baseMultiplier + dateMultiplier * 8000) * 100) / 100,
+                    mortgagePayments: Math.round((30000 * baseMultiplier + dateMultiplier * 3000) * 100) / 100,
+                    loanPayments: Math.round((8400 * baseMultiplier + dateMultiplier * 1500) * 100) / 100,
+                    propertyTaxes: Math.round((12000 * baseMultiplier + dateMultiplier * 2000) * 100) / 100,
+                    incomeTaxes: Math.round((45000 * baseMultiplier + dateMultiplier * 8000) * 100) / 100,
+                    insurancePremiums: Math.round((15000 * baseMultiplier + dateMultiplier * 2500) * 100) / 100,
+                    livingExpenses: Math.round((36000 * baseMultiplier + dateMultiplier * 6000) * 100) / 100
+                },
+                balanceSheet: {
+                    cashInBank: Math.round((107706.50 * baseMultiplier + dateMultiplier * 10000) * 100) / 100,
+                    cashOtherInstitutions: Math.round((25000.00 * baseMultiplier + dateMultiplier * 5000) * 100) / 100,
+                    marketableSecurities: Math.round((150000.00 * baseMultiplier + dateMultiplier * 20000) * 100) / 100,
+                    nonMarketableSecurities: Math.round((50000.00 * baseMultiplier + dateMultiplier * 8000) * 100) / 100,
+                    usGovernmentSecurities: Math.round((75000.00 * baseMultiplier + dateMultiplier * 12000) * 100) / 100,
+                    retirementAccounts: Math.round((350000.00 * baseMultiplier + dateMultiplier * 30000) * 100) / 100,
+                    lifeInsuranceCash: Math.round((45000.00 * baseMultiplier + dateMultiplier * 5000) * 100) / 100,
+                    primaryResidence: Math.round((600000.00 * baseMultiplier + dateMultiplier * 50000) * 100) / 100,
+                    realEstateInvestments: Math.round((400000.00 * baseMultiplier + dateMultiplier * 40000) * 100) / 100,
+                    automobiles: Math.round((45000.00 * baseMultiplier + dateMultiplier * 8000) * 100) / 100,
+                    personalProperty: Math.round((85000.00 * baseMultiplier + dateMultiplier * 15000) * 100) / 100,
+                    otherAssets: Math.round((65000.00 * baseMultiplier + dateMultiplier * 10000) * 100) / 100,
+                    businessInterests: Math.round((200000.00 * baseMultiplier + dateMultiplier * 25000) * 100) / 100,
+                    accountsReceivable: Math.round((35000.00 * baseMultiplier + dateMultiplier * 8000) * 100) / 100,
+                    partnerships: Math.round((125000.00 * baseMultiplier + dateMultiplier * 20000) * 100) / 100,
+                    profitSharing: Math.round((275000.00 * baseMultiplier + dateMultiplier * 35000) * 100) / 100,
+                    
+                    // Liabilities
+                    accountsPayable: Math.round((5000.00 * baseMultiplier + dateMultiplier * 1000) * 100) / 100,
+                    revolvingCredit: Math.round((15000.00 * baseMultiplier + dateMultiplier * 3000) * 100) / 100,
+                    notesPayableBank: Math.round((50000.00 * baseMultiplier + dateMultiplier * 8000) * 100) / 100,
+                    notesPayableOtherBanks: Math.round((25000.00 * baseMultiplier + dateMultiplier * 5000) * 100) / 100,
+                    notesPayableOthers: Math.round((10000.00 * baseMultiplier + dateMultiplier * 2000) * 100) / 100,
+                    mortgagePrimary: Math.round((350000.00 * (1 - periodIndex * 0.05) + dateMultiplier * 10000) * 100) / 100,
+                    mortgageOther: Math.round((200000.00 * (1 - periodIndex * 0.05) + dateMultiplier * 8000) * 100) / 100,
+                    installmentLoans: Math.round((25000.00 * (1 - periodIndex * 0.08) + dateMultiplier * 3000) * 100) / 100,
+                    lifeInsuranceLoans: Math.round((5000.00 * baseMultiplier + dateMultiplier * 1000) * 100) / 100,
+                    incomeTaxesPayable: Math.round((12000.00 * baseMultiplier + dateMultiplier * 2000) * 100) / 100,
+                    creditAccountsBills: Math.round((8000.00 * baseMultiplier + dateMultiplier * 1500) * 100) / 100
+                }
+            };
+        }
+
+        // Function to open add period modal
+        function openAddPeriodModal() {
+            document.getElementById('addPeriodModal').style.display = 'block';
+            resetAddPeriodForm();
+        }
+
+        // Function to reset add period form
+        function resetAddPeriodForm() {
+            document.getElementById('statementType').value = 'PFS';
+            document.getElementById('statementDate').value = '';
+            document.getElementById('periodType').value = 'Annual';
+            document.getElementById('numberOfPeriods').value = '1';
+            document.getElementById('generatedPeriods').style.display = 'none';
+            generatedPeriods = [];
+        }
+
+        // Function to update period generator based on period type
+        function updatePeriodGenerator() {
+            // This function can be used to show/hide custom period options if needed
+        }
+
+        // Function to calculate next period date based on period type
+        function calculateNextPeriodDate(currentDate, periodType, months = null) {
+            const date = new Date(currentDate + 'T00:00:00');
+            let monthsToAdd;
+            
+            switch(periodType) {
+                case 'Annual':
+                    monthsToAdd = 12;
+                    break;
+                case 'Quarterly':
+                    monthsToAdd = 3;
+                    break;
+                case 'Monthly':
+                    monthsToAdd = 1;
+                    break;
+                case 'Custom':
+                    monthsToAdd = months || 12;
+                    break;
+                default:
+                    monthsToAdd = 12;
+            }
+            
+            date.setMonth(date.getMonth() + monthsToAdd);
+            return date.toISOString().split('T')[0];
+        }
+
+        // Function to generate multiple periods
+        function generatePeriods() {
+            const statementDate = document.getElementById('statementDate').value;
+            const periodType = document.getElementById('periodType').value;
+            const numberOfPeriods = parseInt(document.getElementById('numberOfPeriods').value);
+            
+            if (!statementDate) {
+                alert('Please select a statement date first.');
+                return;
+            }
+            
+            if (!numberOfPeriods || numberOfPeriods < 1) {
+                alert('Please enter a valid number of periods.');
+                return;
+            }
+            
+            generatedPeriods = [];
+            let currentDate = statementDate;
+            
+            for (let i = 0; i < numberOfPeriods; i++) {
+                let monthsToAdd;
+                switch(periodType) {
+                    case 'Annual': monthsToAdd = 12; break;
+                    case 'Quarterly': monthsToAdd = 3; break;
+                    case 'Monthly': monthsToAdd = 1; break;
+                    default: monthsToAdd = 12;
+                }
+                
+                generatedPeriods.push({
+                    date: currentDate,
+                    months: monthsToAdd,
+                    type: periodType
+                });
+                
+                currentDate = calculateNextPeriodDate(currentDate, periodType);
+            }
+            
+            displayGeneratedPeriods();
+        }
+
+        // Function to display generated periods
+        function displayGeneratedPeriods() {
+            const periodsList = document.getElementById('periodsList');
+            const generatedPeriodsDiv = document.getElementById('generatedPeriods');
+            
+            if (generatedPeriods.length === 0) {
+                generatedPeriodsDiv.style.display = 'none';
+                return;
+            }
+            
+            periodsList.innerHTML = '';
+            generatedPeriods.forEach((period, index) => {
+                const formattedDate = new Date(period.date + 'T00:00:00').toLocaleDateString('en-US', { 
+                    month: '2-digit', 
+                    day: '2-digit', 
+                    year: 'numeric' 
+                });
+                
+                const periodItem = document.createElement('div');
+                periodItem.className = 'period-item';
+                periodItem.innerHTML = `
+                    <div class="period-info">
+                        <div class="period-date">${formattedDate}</div>
+                        <div class="period-type">${period.type} - ${period.months} months</div>
+                    </div>
+                    <button class="remove-btn" onclick="removePeriod(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                periodsList.appendChild(periodItem);
+            });
+            
+            generatedPeriodsDiv.style.display = 'block';
+        }
+
+        // Function to remove a generated period
+        function removePeriod(index) {
+            generatedPeriods.splice(index, 1);
+            displayGeneratedPeriods();
+        }
+
+        // Function to save period
+        function savePeriod() {
+            if (generatedPeriods.length === 0) {
+                alert('Please generate periods first.');
+                return;
+            }
+            
+            // Add generated periods to main periods array
+            generatedPeriods.forEach((period, index) => {
+                const newPeriodIndex = periods.length + index;
+                periods.push(period);
+                initializePeriodData(newPeriodIndex, period.date);
+            });
+            
+            closeModal('addPeriodModal');
+            renderPfsView();
+            alert('Periods added successfully!');
+        }
+
+        // Function to change period
+        function changePeriod() {
+            const periodSelector = document.getElementById('periodSelector');
+            currentPeriodIndex = parseInt(periodSelector.value);
+            updateDisplayedData();
+        }
+
+        // Function to update displayed data based on selected period
+        function updateDisplayedData() {
+            const data = periodData[currentPeriodIndex];
+            if (!data) return;
+
+            // Update income & expenses values
+            const incomeExpenseElements = {
+                'salary-applicant': data.incomeExpenses.salaryApplicant,
+                'salary-co-applicant': data.incomeExpenses.salaryCoApplicant,
+                'bonuses': data.incomeExpenses.bonuses,
+                'rental-income': data.incomeExpenses.rentalIncome,
+                'dividends': data.incomeExpenses.dividends,
+                'business-income': data.incomeExpenses.businessIncome,
+                'mortgage-payments': data.incomeExpenses.mortgagePayments,
+                'loan-payments': data.incomeExpenses.loanPayments,
+                'property-taxes': data.incomeExpenses.propertyTaxes,
+                'income-taxes': data.incomeExpenses.incomeTaxes,
+                'insurance-premiums': data.incomeExpenses.insurancePremiums,
+                'living-expenses': data.incomeExpenses.livingExpenses
+            };
+
+            // Update the displayed values
+            Object.keys(incomeExpenseElements).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.value = incomeExpenseElements[key];
+                }
+            });
+
+            // Calculate and update totals
+            calculateTotals();
+        }
+
+        // Function to calculate totals
+        function calculateTotals() {
+            const data = periodData[currentPeriodIndex];
+            if (!data) return;
+
+            const totalIncome = data.incomeExpenses.salaryApplicant + data.incomeExpenses.salaryCoApplicant + 
+                               data.incomeExpenses.bonuses + data.incomeExpenses.rentalIncome + 
+                               data.incomeExpenses.dividends + data.incomeExpenses.businessIncome;
+            
+            const totalExpenses = data.incomeExpenses.mortgagePayments + data.incomeExpenses.loanPayments + 
+                                 data.incomeExpenses.propertyTaxes + data.incomeExpenses.incomeTaxes + 
+                                 data.incomeExpenses.insurancePremiums + data.incomeExpenses.livingExpenses;
+
+            const totalIncomeElement = document.getElementById('total-income');
+            const totalExpensesElement = document.getElementById('total-expenses');
+
+            if (totalIncomeElement) {
+                totalIncomeElement.innerHTML = `<strong>$${totalIncome.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong>`;
+            }
+            if (totalExpensesElement) {
+                totalExpensesElement.innerHTML = `<strong>$${totalExpenses.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong>`;
+            }
+        }
+        
+        // Function to render PFS view
+        function renderPfsView() {
+            // Generate period options for dropdown
+            let periodOptions = '';
+            periods.forEach((period, index) => {
+                const formattedDate = new Date(period.date + 'T00:00:00').toLocaleDateString('en-US', { 
+                    month: '2-digit', 
+                    day: '2-digit', 
+                    year: 'numeric' 
+                });
+                const selected = index === currentPeriodIndex ? 'selected' : '';
+                periodOptions += `<option value="${index}" ${selected}>${formattedDate} - PFS (${period.months} Months)</option>`;
+            });
+
+            // Generate period column headers for balance sheet
+            const periodHeaders = periods.map(period => {
+                const formattedDate = new Date(period.date + 'T00:00:00').toLocaleDateString('en-US', { 
+                    month: '2-digit', 
+                    day: '2-digit', 
+                    year: 'numeric' 
+                });
+                return `<th class="amount-cell">${formattedDate}<br><small>PFS - ${period.months} Months</small></th>`;
+            }).join('');
+
+            // Generate balance sheet rows with period columns based on Excel structure
+            const assetRows = [
+                'Cash and Equivalents in Bank',
+                'Cash and Equivalents in Other Institutions',
+                'Marketable Securities',
+                'Non-Readily Marketable Securities',
+                'US Government Securities',
+                'Retirement Accounts',
+                'Cash Value of Life Insurance',
+                'Primary Residence Owned',
+                'Real Estate Investments',
+                'Automobiles',
+                'Personal Property (Art, Jewellery, Collectibles)',
+                'Other Assets (Vehicles/Boats/Proprietorships)',
+                'Business Interests and Ventures',
+                'Accounts/Notes/Loans Receivable Due',
+                'Partnerships / PC Interests',
+                'Profit Sharing and Pension'
+            ].map(assetName => {
+                const periodCells = periods.map((period, index) => {
+                    const data = periodData[index];
+                    if (!data) return `<td class="amount-cell">$0.00</td>`;
+                    
+                    // Map asset names to data properties
+                    const assetMap = {
+                        'Cash and Equivalents in Bank': data.balanceSheet.cashInBank,
+                        'Cash and Equivalents in Other Institutions': data.balanceSheet.cashOtherInstitutions,
+                        'Marketable Securities': data.balanceSheet.marketableSecurities,
+                        'Non-Readily Marketable Securities': data.balanceSheet.nonMarketableSecurities,
+                        'US Government Securities': data.balanceSheet.usGovernmentSecurities,
+                        'Retirement Accounts': data.balanceSheet.retirementAccounts,
+                        'Cash Value of Life Insurance': data.balanceSheet.lifeInsuranceCash,
+                        'Primary Residence Owned': data.balanceSheet.primaryResidence,
+                        'Real Estate Investments': data.balanceSheet.realEstateInvestments,
+                        'Automobiles': data.balanceSheet.automobiles,
+                        'Personal Property (Art, Jewellery, Collectibles)': data.balanceSheet.personalProperty,
+                        'Other Assets (Vehicles/Boats/Proprietorships)': data.balanceSheet.otherAssets,
+                        'Business Interests and Ventures': data.balanceSheet.businessInterests,
+                        'Accounts/Notes/Loans Receivable Due': data.balanceSheet.accountsReceivable,
+                        'Partnerships / PC Interests': data.balanceSheet.partnerships,
+                        'Profit Sharing and Pension': data.balanceSheet.profitSharing
+                    };
+                    
+                    const value = assetMap[assetName] || 0;
+                    return `<td class="amount-cell">$${value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>`;
+                }).join('');
+                
+                return `
+                    <tr>
+                        <td class="item-name">${assetName}</td>
+                        ${periodCells}
+                    </tr>
+                `;
+            }).join('');
+
+            const liabilityRows = [
+                'Accounts Payable',
+                'Revolving Credit (Credit Lines & Credit Cards)',
+                'Notes Payable to Bank',
+                'Notes Payable to other Banks',
+                'Notes payable to Others',
+                'Mortgage on Primary Residence',
+                'Mortgage on other Real Estate',
+                'Other Installment Loans',
+                'Life Insurance Loans',
+                'Income Taxes Payable',
+                'Credit Accounts and Bills Due'
+            ].map(liabilityName => {
+                const periodCells = periods.map((period, index) => {
+                    const data = periodData[index];
+                    if (!data) return `<td class="amount-cell">$0.00</td>`;
+                    
+                    // Map liability names to data properties
+                    const liabilityMap = {
+                        'Accounts Payable': data.balanceSheet.accountsPayable,
+                        'Revolving Credit (Credit Lines & Credit Cards)': data.balanceSheet.revolvingCredit,
+                        'Notes Payable to Bank': data.balanceSheet.notesPayableBank,
+                        'Notes Payable to other Banks': data.balanceSheet.notesPayableOtherBanks,
+                        'Notes payable to Others': data.balanceSheet.notesPayableOthers,
+                        'Mortgage on Primary Residence': data.balanceSheet.mortgagePrimary,
+                        'Mortgage on other Real Estate': data.balanceSheet.mortgageOther,
+                        'Other Installment Loans': data.balanceSheet.installmentLoans,
+                        'Life Insurance Loans': data.balanceSheet.lifeInsuranceLoans,
+                        'Income Taxes Payable': data.balanceSheet.incomeTaxesPayable,
+                        'Credit Accounts and Bills Due': data.balanceSheet.creditAccountsBills
+                    };
+                    
+                    const value = liabilityMap[liabilityName] || 0;
+                    return `<td class="amount-cell">$${value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>`;
+                }).join('');
+                
+                return `
+                    <tr>
+                        <td class="item-name">${liabilityName}</td>
+                        ${periodCells}
+                    </tr>
+                `;
+            }).join('');
+
+            // Calculate totals for each period
+            const totalAssetsCells = periods.map((period, index) => {
+                const data = periodData[index];
+                if (!data) return `<td class="amount-cell"><strong>$0.00</strong></td>`;
+                
+                const totalAssets = Object.values(data.balanceSheet).slice(0, 16).reduce((sum, value) => sum + value, 0);
+                return `<td class="amount-cell"><strong>$${totalAssets.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></td>`;
+            }).join('');
+
+            const totalLiabilitiesCells = periods.map((period, index) => {
+                const data = periodData[index];
+                if (!data) return `<td class="amount-cell"><strong>$0.00</strong></td>`;
+                
+                const totalLiabilities = Object.values(data.balanceSheet).slice(16).reduce((sum, value) => sum + value, 0);
+                return `<td class="amount-cell"><strong>$${totalLiabilities.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></td>`;
+            }).join('');
+
+            const netWorthCells = periods.map((period, index) => {
+                const data = periodData[index];
+                if (!data) return `<td class="amount-cell"><strong>$0.00</strong></td>`;
+                
+                const totalAssets = Object.values(data.balanceSheet).slice(0, 16).reduce((sum, value) => sum + value, 0);
+                const totalLiabilities = Object.values(data.balanceSheet).slice(16).reduce((sum, value) => sum + value, 0);
+                const netWorth = totalAssets - totalLiabilities;
+                return `<td class="amount-cell"><strong>$${netWorth.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></td>`;
+            }).join('');
+
+            const currentData = periodData[currentPeriodIndex];
+            
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="pfs-complete-view">
+                    <div class="pfs-header">
+                        <div class="header-left">
+                            <div class="as-of-date">Personal Financial Statement - As of</div>
+                            <div class="period-selector">
+                                <select id="periodSelector" onchange="changePeriod()">
+                                    ${periodOptions}
+                                </select>
+                            </div>
+                        </div>
+                        <button class="add-period-btn" onclick="openAddPeriodModal()">
+                            <i class="fas fa-plus"></i> Period
+                        </button>
+                    </div>
+                    
+                    <div class="pfs-sections">
+                        <div class="pfs-section-tab active" onclick="switchSection('income-expenses')">
+                            Income & Expenses
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('balance-sheet')">
+                            Balance Sheet
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('profit-sharing')">
+                            Profit Sharing and Pension
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('cash-equivalents')">
+                            Cash and Equivalents Schedule
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('securities')">
+                            Securities Schedule
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('real-estate')">
+                            Real Estate Schedule
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('life-insurance')">
+                            Life Insurance Value Schedule
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('bank-relationship')">
+                            Bank & Institution Relationship
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('personal-info')">
+                            Personal General Information
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('other-assets')">
+                            Other Assets Schedule
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('accounts-receivables')">
+                            Accounts and Notes Receivables
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('receivables-contracts')">
+                            Receivables Contracts Due To Me
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('business-interests')">
+                            Business Interests and Ventures
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('partnership-pc')">
+                            Partnership & PC Interest Schedule
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('liabilities')">
+                            Liabilities Schedule
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('credit-accounts')">
+                            Credit Accounts and Bills Due
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('contingent-liabilities')">
+                            Contingent Liabilities
+                        </div>
+                        <div class="pfs-section-tab" onclick="switchSection('disclosure')">
+                            Disclosure
+                        </div>
+                    </div>
+                    
+                    <div class="pfs-content">
+                        <!-- Income & Expenses Section -->
+                        <div class="section-content active" id="income-expenses-content">
+                            <div class="schedule-header">Income & Expenses</div>
+                            
+                            <h4>Income Information</h4>
+                            <table class="schedule-table">
+                                <thead>
+                                    <tr>
+                                        <th>Income Type</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Salary (Applicant)</td>
+                                        <td><input type="text" class="form-input" value="Primary Employment Income"></td>
+                                        <td><input type="number" class="form-input currency" id="salary-applicant" value="${currentData.incomeExpenses.salaryApplicant}" step="0.01"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Salary (Co-Applicant/Guarantor)</td>
+                                        <td><input type="text" class="form-input" value="Spouse Employment Income"></td>
+                                        <td><input type="number" class="form-input currency" id="salary-co-applicant" value="${currentData.incomeExpenses.salaryCoApplicant}" step="0.01"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bonuses & Commissions</td>
+                                        <td><input type="text" class="form-input" value="Annual Performance Bonus"></td>
+                                        <td><input type="number" class="form-input currency" id="bonuses" value="${currentData.incomeExpenses.bonuses}" step="0.01"></td>
+                                    </tr>
+                                    <tr>
+                                    <td>Rental Income / Real Estate Income</td>
+                                    <td><input type="text" class="form-input" value="Investment Property Rental"></td>
+                                    <td><input type="number" class="form-input currency" id="rental-income" value="${currentData.incomeExpenses.rentalIncome}" step="0.01"></td>
+                                </tr>
+                                <tr>
+                                    <td>Dividends / Interest</td>
+                                    <td><input type="text" class="form-input" value="Investment Portfolio Returns"></td>
+                                    <td><input type="number" class="form-input currency" id="dividends" value="${currentData.incomeExpenses.dividends}" step="0.01"></td>
+                                </tr>
+                                <tr>
+                                    <td>Business Income</td>
+                                    <td><input type="text" class="form-input" value="Consulting Business"></td>
+                                    <td><input type="number" class="form-input currency" id="business-income" value="${currentData.incomeExpenses.businessIncome}" step="0.01"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="2" class="total-label"><strong>Total Income</strong></td>
+                                    <td class="total-amount" id="total-income"><strong>$${(currentData.incomeExpenses.salaryApplicant + currentData.incomeExpenses.salaryCoApplicant + currentData.incomeExpenses.bonuses + currentData.incomeExpenses.rentalIncome + currentData.incomeExpenses.dividends + currentData.incomeExpenses.businessIncome).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        
+                        <h4>Expenses Information</h4>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Expense Type</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Mortgage / Rent Payments</td>
+                                    <td><input type="text" class="form-input" value="Primary Residence Mortgage"></td>
+                                    <td><input type="number" class="form-input currency" id="mortgage-payments" value="${currentData.incomeExpenses.mortgagePayments}" step="0.01"></td>
+                                </tr>
+                                <tr>
+                                    <td>Loan Payments</td>
+                                    <td><input type="text" class="form-input" value="Auto Loans and Personal Loans"></td>
+                                    <td><input type="number" class="form-input currency" id="loan-payments" value="${currentData.incomeExpenses.loanPayments}" step="0.01"></td>
+                                </tr>
+                                <tr>
+                                    <td>Property Taxes</td>
+                                    <td><input type="text" class="form-input" value="Real Estate Property Taxes"></td>
+                                    <td><input type="number" class="form-input currency" id="property-taxes" value="${currentData.incomeExpenses.propertyTaxes}" step="0.01"></td>
+                                </tr>
+                                <tr>
+                                    <td>Income Taxes</td>
+                                    <td><input type="text" class="form-input" value="Federal and State Income Taxes"></td>
+                                    <td><input type="number" class="form-input currency" id="income-taxes" value="${currentData.incomeExpenses.incomeTaxes}" step="0.01"></td>
+                                </tr>
+                                <tr>
+                                    <td>Insurance Premiums</td>
+                                    <td><input type="text" class="form-input" value="Life/Auto/Health/Home Insurance"></td>
+                                    <td><input type="number" class="form-input currency" id="insurance-premiums" value="${currentData.incomeExpenses.insurancePremiums}" step="0.01"></td>
+                                </tr>
+                                <tr>
+                                    <td>Living Expenses</td>
+                                    <td><input type="text" class="form-input" value="Utilities, Food, etc."></td>
+                                    <td><input type="number" class="form-input currency" id="living-expenses" value="${currentData.incomeExpenses.livingExpenses}" step="0.01"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="2" class="total-label"><strong>Total Expenses</strong></td>
+                                    <td class="total-amount" id="total-expenses"><strong>$${(currentData.incomeExpenses.mortgagePayments + currentData.incomeExpenses.loanPayments + currentData.incomeExpenses.propertyTaxes + currentData.incomeExpenses.incomeTaxes + currentData.incomeExpenses.insurancePremiums + currentData.incomeExpenses.livingExpenses).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <button type="button" class="btn-add-row" onclick="addIncomeRow()">+ Add Income Item</button>
+                        <button type="button" class="btn-add-row" onclick="addExpenseRow()">+ Add Expense Item</button>
+                    </div>
+                    
+                    <!-- Balance Sheet Section with Multiple Period Columns -->
+                    <div class="section-content" id="balance-sheet-content">
+                        <div class="schedule-header">Balance Sheet</div>
+                        <div style="overflow-x: auto;">
+                            <table class="balance-sheet-table">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width: 300px;">Assets</th>
+                                        ${periodHeaders}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${assetRows}
+                                    <tr class="total-row">
+                                        <td><strong>Total Assets</strong></td>
+                                        ${totalAssetsCells}
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <table class="balance-sheet-table">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width: 300px;">Liabilities</th>
+                                        ${periodHeaders}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${liabilityRows}
+                                    <tr class="total-row">
+                                        <td><strong>Total Liabilities</strong></td>
+                                        ${totalLiabilitiesCells}
+                                    </tr>
+                                    <tr class="total-row">
+                                        <td><strong>Net Worth</strong></td>
+                                        ${netWorthCells}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Profit Sharing and Pension Schedule -->
+                    <div class="section-content" id="profit-sharing-content">
+                        <div class="schedule-header">Profit Sharing and Pension Schedule</div>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Name of the Institution</th>
+                                    <th>Type of Account</th>
+                                    <th>Account Balance</th>
+                                    <th>Amount Totally Vested</th>
+                                    <th>Loan Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="Fidelity Investments"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="401(k)" selected>401(k)</option>
+                                            <option value="403(b)">403(b)</option>
+                                            <option value="IRA">IRA</option>
+                                            <option value="Pension">Pension</option>
+                                            <option value="Profit Sharing">Profit Sharing</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-input currency" value="185000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="185000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="0" step="0.01"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="Vanguard"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="401(k)">401(k)</option>
+                                            <option value="403(b)">403(b)</option>
+                                            <option value="IRA" selected>IRA</option>
+                                            <option value="Pension">Pension</option>
+                                            <option value="Profit Sharing">Profit Sharing</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-input currency" value="90000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="90000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="0" step="0.01"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="2" class="total-label"><strong>Total</strong></td>
+                                    <td class="total-amount"><strong>$275,000.00</strong></td>
+                                    <td class="total-amount"><strong>$275,000.00</strong></td>
+                                    <td class="total-amount"><strong>$0.00</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <button type="button" class="btn-add-row">+ Add Account</button>
+                    </div>
+                    
+                    <!-- Cash and Equivalents Schedule -->
+                    <div class="section-content" id="cash-equivalents-content">
+                        <div class="schedule-header">Cash and Equivalents Schedule</div>
+                        
+                        <h4>Cash and Equivalents in Bank</h4>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Account Type</th>
+                                    <th>Pledged?</th>
+                                    <th>Current Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Checking" selected>Checking</option>
+                                            <option value="Savings">Savings</option>
+                                            <option value="CD">CD</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="No" selected>No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-input currency" value="45750.00" step="0.01"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Checking">Checking</option>
+                                            <option value="Savings" selected>Savings</option>
+                                            <option value="CD">CD</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="No" selected>No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-input currency" value="35000.00" step="0.01"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Checking">Checking</option>
+                                            <option value="Savings">Savings</option>
+                                            <option value="CD" selected>CD</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="No" selected>No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-input currency" value="26956.50" step="0.01"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="2" class="total-label"><strong>Total Current Balance</strong></td>
+                                    <td class="total-amount"><strong>$107,706.50</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        
+                        <h4 style="margin-top: 30px;">Cash and Equivalents in Other Banks</h4>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Name of the Bank</th>
+                                    <th>Account Type</th>
+                                    <th>Pledged? Or Held by others</th>
+                                    <th>Current Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="Wells Fargo"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Checking">Checking</option>
+                                            <option value="Savings" selected>Savings</option>
+                                            <option value="CD">CD</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="No" selected>No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-input currency" value="25000.00" step="0.01"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="3" class="total-label"><strong>Total Current Balance</strong></td>
+                                    <td class="total-amount"><strong>$25,000.00</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <button type="button" class="btn-add-row">+ Add Bank</button>
+                    </div>
+                    
+                    <!-- Securities Schedule -->
+                    <div class="section-content" id="securities-content">
+                        <div class="schedule-header">Securities Schedule</div>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Type of Security</th>
+                                    <th>Brokerage Name</th>
+                                    <th>Registered in the name of</th>
+                                    <th>Number of Shares</th>
+                                    <th>Cost/Original Investment</th>
+                                    <th>Current Market Value</th>
+                                    <th>Pledged as Collateral?</th>
+                                    <th>Restricted?</th>
+                                    <th>Where Traded?</th>
+                                    <th>Retirement Account?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Marketable" selected>Marketable</option>
+                                            <option value="Non-Marketable">Non-Marketable</option>
+                                            <option value="US Government">US Government</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="Charles Schwab"></td>
+                                    <td><input type="text" class="form-input" value="John & Jane Doe"></td>
+                                    <td><input type="number" class="form-input" value="500"></td>
+                                    <td><input type="number" class="form-input currency" value="75000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="85000" step="0.01"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="No" selected>No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="No" selected>No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="NASDAQ"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="No" selected>No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Marketable" selected>Marketable</option>
+                                            <option value="Non-Marketable">Non-Marketable</option>
+                                            <option value="US Government">US Government</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="Fidelity"></td>
+                                    <td><input type="text" class="form-input" value="Jane Doe"></td>
+                                    <td><input type="number" class="form-input" value="1000"></td>
+                                    <td><input type="number" class="form-input currency" value="50000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="65000" step="0.01"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="No" selected>No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="No" selected>No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="NYSE"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="No">No</option>
+                                            <option value="Yes" selected>Yes</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="5" class="total-label"><strong>Total Market Value</strong></td>
+                                    <td class="total-amount"><strong>$150,000.00</strong></td>
+                                    <td colspan="4"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <button type="button" class="btn-add-row">+ Add Security</button>
+                    </div>
+                    
+                    <!-- Real Estate Schedule -->
+                    <div class="section-content" id="real-estate-content">
+                        <div class="schedule-header">Real Estate Schedule</div>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Property Type</th>
+                                    <th>Property Address</th>
+                                    <th>Date Acquired</th>
+                                    <th>Original Cost</th>
+                                    <th>Current Market Value</th>
+                                    <th>Current Mortgage Balance</th>
+                                    <th>Monthly Mortgage Payment</th>
+                                    <th>Rental Income (if applicable)</th>
+                                    <th>Property Taxes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Personal Residence" selected>Personal Residence</option>
+                                            <option value="Investment Property">Investment Property</option>
+                                            <option value="Commercial Property">Commercial Property</option>
+                                            <option value="Vacant Land">Vacant Land</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="123 Main Street, Anytown, ST 12345"></td>
+                                    <td><input type="date" class="form-input" value="2015-06-15"></td>
+                                    <td><input type="number" class="form-input currency" value="450000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="600000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="350000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="2500" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="0" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="12000" step="0.01"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Personal Residence">Personal Residence</option>
+                                            <option value="Investment Property" selected>Investment Property</option>
+                                            <option value="Commercial Property">Commercial Property</option>
+                                            <option value="Vacant Land">Vacant Land</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="456 Oak Avenue, Rental City, ST 67890"></td>
+                                    <td><input type="date" class="form-input" value="2018-03-20"></td>
+                                    <td><input type="number" class="form-input currency" value="320000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="400000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="200000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="1800" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="2200" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="8000" step="0.01"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="4" class="total-label"><strong>Total</strong></td>
+                                    <td class="total-amount"><strong>$1,000,000.00</strong></td>
+                                    <td class="total-amount"><strong>$550,000.00</strong></td>
+                                    <td class="total-amount"><strong>$4,300.00</strong></td>
+                                    <td class="total-amount"><strong>$2,200.00</strong></td>
+                                    <td class="total-amount"><strong>$20,000.00</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <button type="button" class="btn-add-row">+ Add Property</button>
+                    </div>
+                    
+                    <!-- Life Insurance Value Schedule -->
+                    <div class="section-content" id="life-insurance-content">
+                        <div class="schedule-header">Life Insurance Value Schedule</div>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Insurance Company</th>
+                                    <th>Policy Owner</th>
+                                    <th>Policy Type</th>
+                                    <th>Face Value</th>
+                                      <th>Cash Surrender Value</th>
+                                    <th>Amount Borrowed</th>
+                                    <th>Ownership %</th>
+                                    <th>Beneficiary</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="State Farm"></td>
+                                    <td><input type="text" class="form-input" value="John Doe"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Whole Life" selected>Whole Life</option>
+                                            <option value="Term Life">Term Life</option>
+                                            <option value="Universal Life">Universal Life</option>
+                                            <option value="Variable Life">Variable Life</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-input currency" value="500000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="45000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="5000" step="0.01"></td>
+                                    <td><input type="number" class="form-input" value="100" min="0" max="100">%</td>
+                                    <td><input type="text" class="form-input" value="Jane Doe"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="4" class="total-label"><strong>Total</strong></td>
+                                    <td class="total-amount"><strong>$45,000.00</strong></td>
+                                    <td class="total-amount"><strong>$5,000.00</strong></td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <button type="button" class="btn-add-row">+ Add Policy</button>
+                    </div>
+                    
+                    <!-- Bank & Institution Relationship -->
+                    <div class="section-content" id="bank-relationship-content">
+                        <div class="schedule-header">Bank & Institution Relationship</div>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Institution Name</th>
+                                    <th>Type of Institution</th>
+                                    <th>Contact Person</th>
+                                    <th>Phone Number</th>
+                                    <th>Account Types</th>
+                                    <th>Years of Relationship</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="Chase Bank"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Commercial Bank" selected>Commercial Bank</option>
+                                            <option value="Credit Union">Credit Union</option>
+                                            <option value="Investment Bank">Investment Bank</option>
+                                            <option value="Brokerage">Brokerage</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="Michael Johnson"></td>
+                                    <td><input type="tel" class="form-input" value="(555) 123-4567"></td>
+                                    <td><input type="text" class="form-input" value="Checking, Savings, Mortgage"></td>
+                                    <td><input type="number" class="form-input" value="8" min="0"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="Charles Schwab"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Commercial Bank">Commercial Bank</option>
+                                            <option value="Credit Union">Credit Union</option>
+                                            <option value="Investment Bank">Investment Bank</option>
+                                            <option value="Brokerage" selected>Brokerage</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="Sarah Williams"></td>
+                                    <td><input type="tel" class="form-input" value="(555) 987-6543"></td>
+                                    <td><input type="text" class="form-input" value="Investment Account, IRA"></td>
+                                    <td><input type="number" class="form-input" value="5" min="0"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn-add-row">+ Add Institution</button>
+                    </div>
+                    
+                    <!-- Personal General Information -->
+                    <div class="section-content" id="personal-info-content">
+                        <div class="schedule-header">Personal General Information</div>
+                        
+                        <h4>Individual Information</h4>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Field</th>
+                                    <th>Applicant</th>
+                                    <th>Co-Applicant/Guarantor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Full Name</strong></td>
+                                    <td><input type="text" class="form-input" value="John Michael Doe"></td>
+                                    <td><input type="text" class="form-input" value="Jane Elizabeth Doe"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Date of Birth</strong></td>
+                                    <td><input type="date" class="form-input" value="1985-03-15"></td>
+                                    <td><input type="date" class="form-input" value="1987-08-22"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Social Security Number</strong></td>
+                                    <td><input type="text" class="form-input" value="XXX-XX-1234"></td>
+                                    <td><input type="text" class="form-input" value="XXX-XX-5678"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Citizenship Status</strong></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value=" Citizen" selected>Citizen</option>
+                                            <option value="Resident Alien">Resident Alien</option>
+                                            <option value="Non-Resident Alien">Non-Resident Alien</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value=" Citizen" selected>Citizen</option>
+                                            <option value="Resident Alien">Resident Alien</option>
+                                            <option value="Non-Resident Alien">Non-Resident Alien</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Marital Status</strong></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Single">Single</option>
+                                            <option value="Married" selected>Married</option>
+                                            <option value="Divorced">Divorced</option>
+                                            <option value="Widowed">Widowed</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Single">Single</option>
+                                            <option value="Married" selected>Married</option>
+                                            <option value="Divorced">Divorced</option>
+                                            <option value="Widowed">Widowed</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Address</strong></td>
+                                    <td><input type="text" class="form-input" value="123 Main Street, Anytown, ST 12345"></td>
+                                    <td><input type="text" class="form-input" value="123 Main Street, Anytown, ST 12345"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Phone Number</strong></td>
+                                    <td><input type="tel" class="form-input" value="(555) 123-4567"></td>
+                                    <td><input type="tel" class="form-input" value="(555) 123-4568"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email Address</strong></td>
+                                    <td><input type="email" class="form-input" value="john.doe@email.com"></td>
+                                    <td><input type="email" class="form-input" value="jane.doe@email.com"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Employer</strong></td>
+                                    <td><input type="text" class="form-input" value="ABC Corporation"></td>
+                                    <td><input type="text" class="form-input" value="XYZ Industries"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Position/Title</strong></td>
+                                    <td><input type="text" class="form-input" value="Senior Manager"></td>
+                                    <td><input type="text" class="form-input" value="Marketing Director"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Years with Employer</strong></td>
+                                    <td><input type="number" class="form-input" value="8" min="0"></td>
+                                    <td><input type="number" class="form-input" value="6" min="0"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Other Assets Schedule -->
+                    <div class="section-content" id="other-assets-content">
+                        <div class="schedule-header">Other Assets Schedule</div>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Asset Description</th>
+                                    <th>Asset Type</th>
+                                    <th>Current Value</th>
+                                    <th>Date Acquired</th>
+                                    <th>Original Cost</th>
+                                    <th>Pledged as Collateral?</th>
+                                    <th>Lien Holder</th>
+                                    <th>Amount of Lien</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="2022 Tesla Model S"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Automobile" selected>Automobile</option>
+                                            <option value="Boat">Boat</option>
+                                            <option value="Aircraft">Aircraft</option>
+                                            <option value="Jewelry">Jewelry</option>
+                                            <option value="Art/Collectibles">Art/Collectibles</option>
+                                            <option value="Furniture">Furniture</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-input currency" value="65000" step="0.01"></td>
+                                    <td><input type="date" class="form-input" value="2022-01-15"></td>
+                                    <td><input type="number" class="form-input currency" value="85000" step="0.01"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="No" selected>No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value=""></td>
+                                    <td><input type="number" class="form-input currency" value="0" step="0.01"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="Diamond Ring Collection"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Automobile">Automobile</option>
+                                            <option value="Boat">Boat</option>
+                                            <option value="Aircraft">Aircraft</option>
+                                            <option value="Jewelry" selected>Jewelry</option>
+                                            <option value="Art/Collectibles">Art/Collectibles</option>
+                                            <option value="Furniture">Furniture</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-input currency" value="25000" step="0.01"></td>
+                                    <td><input type="date" class="form-input" value="2020-06-10"></td>
+                                    <td><input type="number" class="form-input currency" value="20000" step="0.01"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="No" selected>No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value=""></td>
+                                    <td><input type="number" class="form-input currency" value="0" step="0.01"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="2" class="total-label"><strong>Total Current Value</strong></td>
+                                    <td class="total-amount"><strong>$90,000.00</strong></td>
+                                    <td colspan="5"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <button type="button" class="btn-add-row">+ Add Asset</button>
+                    </div>
+                    
+                    <!-- Accounts and Notes Receivables Schedule -->
+                    <div class="section-content" id="accounts-receivables-content">
+                        <div class="schedule-header">Accounts and Notes Receivables Schedule</div>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Debtor Name</th>
+                                    <th>Type of Receivable</th>
+                                    <th>Original Amount</th>
+                                    <th>Current Balance</th>
+                                    <th>Date Due</th>
+                                    <th>Interest Rate</th>
+                                    <th>Collateral Description</th>
+                                    <th>How Acquired</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="ABC Company"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Note Receivable" selected>Note Receivable</option>
+                                            <option value="Account Receivable">Account Receivable</option>
+                                            <option value="Loan Receivable">Loan Receivable</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-input currency" value="50000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="35000" step="0.01"></td>
+                                    <td><input type="date" class="form-input" value="2026-12-31"></td>
+                                    <td><input type="text" class="form-input" value="5.5%"></td>
+                                    <td><input type="text" class="form-input" value="Equipment"></td>
+                                    <td><input type="text" class="form-input" value="Business Transaction"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="3" class="total-label"><strong>Total Current Balance</strong></td>
+                                    <td class="total-amount"><strong>$35,000.00</strong></td>
+                                    <td colspan="4"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <button type="button" class="btn-add-row">+ Add Receivable</button>
+                    </div>
+                    
+                    <!-- Receivables Contracts Due To Me -->
+                    <div class="section-content" id="receivables-contracts-content">
+                        <div class="schedule-header">Receivables Contracts Due To Me</div>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Contract Party</th>
+                                    <th>Contract Type</th>
+                                    <th>Contract Value</th>
+                                    <th>Amount Receivable</th>
+                                    <th>Payment Schedule</th>
+                                    <th>Contract Date</th>
+                                    <th>Maturity Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="XYZ Corporation"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Service Contract" selected>Service Contract</option>
+                                            <option value="Sales Contract">Sales Contract</option>
+                                            <option value="Consulting Agreement">Consulting Agreement</option>
+                                            <option value="Licensing Agreement">Licensing Agreement</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-input currency" value="100000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="75000" step="0.01"></td>
+                                    <td><input type="text" class="form-input" value="Monthly"></td>
+                                    <td><input type="date" class="form-input" value="2024-01-01"></td>
+                                    <td><input type="date" class="form-input" value="2026-12-31"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Active" selected>Active</option>
+                                            <option value="Pending">Pending</option>
+                                            <option value="Completed">Completed</option>
+                                            <option value="Disputed">Disputed</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="3" class="total-label"><strong>Total Amount Receivable</strong></td>
+                                    <td class="total-amount"><strong>$75,000.00</strong></td>
+                                    <td colspan="4"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <button type="button" class="btn-add-row">+ Add Contract</button>
+                    </div>
+                    
+                    <!-- Business Interests and Ventures -->
+                    <div class="section-content" id="business-interests-content">
+                        <div class="schedule-header">Business Interests and Ventures</div>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Business Name</th>
+                                    <th>Type of Business</th>
+                                    <th>Ownership %</th>
+                                    <th>Investment Amount</th>
+                                    <th>Current Value</th>
+                                    <th>Annual Income</th>
+                                    <th>Role/Position</th>
+                                    <th>Date Acquired</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="Tech Solutions LLC"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="LLC" selected>LLC</option>
+                                            <option value="Corporation">Corporation</option>
+                                            <option value="Partnership">Partnership</option>
+                                            <option value="Sole Proprietorship">Sole Proprietorship</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-input" value="25" min="0" max="100">%</td>
+                                    <td><input type="number" class="form-input currency" value="150000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="200000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="35000" step="0.01"></td>
+                                    <td><input type="text" class="form-input" value="Managing Member"></td>
+                                    <td><input type="date" class="form-input" value="2020-03-15"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="4" class="total-label"><strong>Total Current Value</strong></td>
+                                    <td class="total-amount"><strong>$200,000.00</strong></td>
+                                    <td class="total-amount"><strong>$35,000.00</strong></td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <button type="button" class="btn-add-row">+ Add Business Interest</button>
+                    </div>
+                    
+                    <!-- Partnership & PC Interest Schedule -->
+                    <div class="section-content" id="partnership-pc-content">
+                        <div class="schedule-header">Partnership & PC Interest Schedule</div>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Partnership/PC Name</th>
+                                    <th>Type</th>
+                                    <th>Ownership %</th>
+                                    <th>Capital Account Balance</th>
+                                    <th>Estimated Market Value</th>
+                                    <th>Annual Distributions</th>
+                                    <th>Tax Basis</th>
+                                    <th>Date of Investment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="Medical Associates PC"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="General Partnership">General Partnership</option>
+                                            <option value="Limited Partnership">Limited Partnership</option>
+                                            <option value="Professional Corporation" selected>Professional Corporation</option>
+                                            <option value="LLP">LLP</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-input" value="15" min="0" max="100">%</td>
+                                    <td><input type="number" class="form-input currency" value="100000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="125000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="18000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="95000" step="0.01"></td>
+                                    <td><input type="date" class="form-input" value="2019-07-01"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="4" class="total-label"><strong>Total Market Value</strong></td>
+                                    <td class="total-amount"><strong>$125,000.00</strong></td>
+                                    <td class="total-amount"><strong>$18,000.00</strong></td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                                                <button type="button" class="btn-add-row">+ Add Partnership/PC Interest</button>
+                    </div>
+                    
+                    <!-- Liabilities Schedule -->
+                    <div class="section-content" id="liabilities-content">
+                        <div class="schedule-header">Liabilities Schedule</div>
+                        
+                        <h4>Revolving Credits (Credit Cards, Credit Lines)</h4>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Type of Credit</th>
+                                    <th>Creditor Name</th>
+                                    <th>Credit Limit</th>
+                                    <th>Current Balance</th>
+                                    <th>Monthly Payment</th>
+                                    <th>Interest Rate</th>
+                                    <th>Account Number</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Credit Card" selected>Credit Card</option>
+                                            <option value="Line of Credit">Line of Credit</option>
+                                            <option value="HELOC">HELOC</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="Chase Bank"></td>
+                                    <td><input type="number" class="form-input currency" value="25000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="8500" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="250" step="0.01"></td>
+                                    <td><input type="text" class="form-input" value="18.99%"></td>
+                                    <td><input type="text" class="form-input" value="****1234"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Credit Card" selected>Credit Card</option>
+                                            <option value="Line of Credit">Line of Credit</option>
+                                            <option value="HELOC">HELOC</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="American Express"></td>
+                                    <td><input type="number" class="form-input currency" value="15000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="3200" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="150" step="0.01"></td>
+                                    <td><input type="text" class="form-input" value="21.99%"></td>
+                                    <td><input type="text" class="form-input" value="****5678"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="3" class="total-label"><strong>Total Balance</strong></td>
+                                    <td class="total-amount"><strong>$11,700.00</strong></td>
+                                    <td class="total-amount"><strong>$400.00</strong></td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        
+                        <h4 style="margin-top: 30px;">Notes Payable</h4>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Lender/Payee</th>
+                                    <th>Original Amount</th>
+                                    <th>Current Balance</th>
+                                    <th>Monthly Payment</th>
+                                    <th>Interest Rate</th>
+                                    <th>Maturity Date</th>
+                                    <th>Secured/Unsecured</th>
+                                    <th>Collateral</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="First National Bank"></td>
+                                    <td><input type="number" class="form-input currency" value="75000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="50000" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="850" step="0.01"></td>
+                                    <td><input type="text" class="form-input" value="5.25%"></td>
+                                    <td><input type="date" class="form-input" value="2030-06-15"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Secured" selected>Secured</option>
+                                            <option value="Unsecured">Unsecured</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="Business Equipment"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="2" class="total-label"><strong>Total Balance</strong></td>
+                                    <td class="total-amount"><strong>$50,000.00</strong></td>
+                                    <td class="total-amount"><strong>$850.00</strong></td>
+                                    <td colspan="4"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <button type="button" class="btn-add-row">+ Add Liability</button>
+                    </div>
+                    
+                    <!-- Credit Accounts and Bills Due -->
+                    <div class="section-content" id="credit-accounts-content">
+                        <div class="schedule-header">Credit Accounts and Bills Due</div>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Creditor Name</th>
+                                    <th>Type of Account</th>
+                                    <th>Account Number</th>
+                                    <th>Current Balance</th>
+                                    <th>Minimum Payment</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="Electric Company"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Utility" selected>Utility</option>
+                                            <option value="Medical">Medical</option>
+                                            <option value="Professional Services">Professional Services</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="123456789"></td>
+                                    <td><input type="number" class="form-input currency" value="250" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="250" step="0.01"></td>
+                                    <td><input type="date" class="form-input" value="2025-07-15"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Current" selected>Current</option>
+                                            <option value="Past Due">Past Due</option>
+                                            <option value="In Dispute">In Dispute</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="Medical Center"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Utility">Utility</option>
+                                            <option value="Medical" selected>Medical</option>
+                                            <option value="Professional Services">Professional Services</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="987654321"></td>
+                                    <td><input type="number" class="form-input currency" value="1500" step="0.01"></td>
+                                    <td><input type="number" class="form-input currency" value="150" step="0.01"></td>
+                                    <td><input type="date" class="form-input" value="2025-07-30"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Current" selected>Current</option>
+                                            <option value="Past Due">Past Due</option>
+                                            <option value="In Dispute">In Dispute</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="3" class="total-label"><strong>Total Balance Due</strong></td>
+                                    <td class="total-amount"><strong>$1,750.00</strong></td>
+                                    <td class="total-amount"><strong>$400.00</strong></td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <button type="button" class="btn-add-row">+ Add Account</button>
+                    </div>
+                    
+                    <!-- Contingent Liabilities -->
+                    <div class="section-content" id="contingent-liabilities-content">
+                        <div class="schedule-header">Contingent Liabilities</div>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Type of Contingent Liability</th>
+                                    <th>Description</th>
+                                    <th>Potential Amount</th>
+                                    <th>Probability</th>
+                                    <th>Related Party</th>
+                                    <th>Date Incurred</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Guarantee" selected>Guarantee</option>
+                                            <option value="Legal Claim">Legal Claim</option>
+                                            <option value="Warranty">Warranty</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="Personal Guarantee on Business Loan"></td>
+                                    <td><input type="number" class="form-input currency" value="100000" step="0.01"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Low" selected>Low</option>
+                                            <option value="Medium">Medium</option>
+                                            <option value="High">High</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="Tech Solutions LLC"></td>
+                                    <td><input type="date" class="form-input" value="2023-05-15"></td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Active" selected>Active</option>
+                                            <option value="Resolved">Resolved</option>
+                                            <option value="In Litigation">In Litigation</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="2" class="total-label"><strong>Total Potential Amount</strong></td>
+                                    <td class="total-amount"><strong>$100,000.00</strong></td>
+                                    <td colspan="4"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <button type="button" class="btn-add-row">+ Add Contingent Liability</button>
+                    </div>
+                    
+                    <!-- Disclosure -->
+                    <div class="section-content" id="disclosure-content">
+                        <div class="schedule-header">Disclosure</div>
+                        
+                        <h4>General Disclosures</h4>
+                        <div style="margin-bottom: 20px;">
+                            <label style="font-weight: bold; display: block; margin-bottom: 10px;">
+                                Are you a party to any lawsuit or legal action?
+                            </label>
+                            <select class="form-select" style="width: 200px; display: inline-block;">
+                                <option value="No" selected>No</option>
+                                <option value="Yes">Yes</option>
+                            </select>
+                            <div style="margin-top: 10px;">
+                                <textarea class="form-input" rows="3" placeholder="If yes, please provide details..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="font-weight: bold; display: block; margin-bottom: 10px;">
+                                Have you ever filed for bankruptcy?
+                            </label>
+                            <select class="form-select" style="width: 200px; display: inline-block;">
+                                <option value="No" selected>No</option>
+                                <option value="Yes">Yes</option>
+                            </select>
+                            <div style="margin-top: 10px;">
+                                <textarea class="form-input" rows="3" placeholder="If yes, please provide details including date and type..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="font-weight: bold; display: block; margin-bottom: 10px;">
+                                Are you obligated to pay alimony, child support, or separate maintenance?
+                            </label>
+                            <select class="form-select" style="width: 200px; display: inline-block;">
+                                <option value="No" selected>No</option>
+                                <option value="Yes">Yes</option>
+                            </select>
+                            <div style="margin-top: 10px;">
+                                <textarea class="form-input" rows="3" placeholder="If yes, please provide monthly amount and details..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="font-weight: bold; display: block; margin-bottom: 10px;">
+                                Do you have any other significant financial obligations not listed above?
+                            </label>
+                            <select class="form-select" style="width: 200px; display: inline-block;">
+                                <option value="No" selected>No</option>
+                                <option value="Yes">Yes</option>
+                            </select>
+                            <div style="margin-top: 10px;">
+                                <textarea class="form-input" rows="3" placeholder="If yes, please describe..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <h4>Certification</h4>
+                        <div style="border: 1px solid #ddd; padding: 20px; background-color: #f9f9f9; margin-top: 20px;">
+                            <p style="margin-bottom: 15px;">
+                                <strong>I/We certify that the information provided in this Personal Financial Statement is true and complete to the best of my/our knowledge. I/We understand that this information is being used to evaluate my/our creditworthiness and that any misrepresentation may result in denial of credit or other adverse action.</strong>
+                            </p>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px;">
+                                <div>
+                                    <label style="font-weight: bold; display: block; margin-bottom: 10px;">Applicant Signature:</label>
+                                    <div style="border-bottom: 1px solid #333; height: 40px; margin-bottom: 10px;"></div>
+                                    <label>Date: <input type="date" class="form-input" style="width: 150px; display: inline-block; margin-left: 10px;"></label>
+                                </div>
+                                
+                                <div>
+                                    <label style="font-weight: bold; display: block; margin-bottom: 10px;">Co-Applicant Signature:</label>
+                                    <div style="border-bottom: 1px solid #333; height: 40px; margin-bottom: 10px;"></div>
+                                    <label>Date: <input type="date" class="form-input" style="width: 150px; display: inline-block; margin-left: 10px;"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Function to switch sections
+    function switchSection(sectionId) {
+        // Update active tab
+        document.querySelectorAll('.pfs-section-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // Update active content
+        document.querySelectorAll('.section-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.getElementById(`${sectionId}-content`).classList.add('active');
+    }
+    
+    // Add row functions for various sections
+    function addIncomeRow() {
+        // Implementation for adding income rows
+    }
+    
+    function addExpenseRow() {
+        // Implementation for adding expense rows
+    }
+    
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    }
+
+    // Initialize calculations on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set default date for add period modal
+        const today = new Date();
+        const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+        const statementDateInput = document.getElementById('statementDate');
+        if (statementDateInput) {
+            statementDateInput.value = nextMonth.toISOString().split('T')[0];
+        }
+    });
+</script>
+</body>
+</html>
+
+
